@@ -1,6 +1,5 @@
 import discord
-import torch
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
+import openai
 
 # Replace 'YOUR_BOT_TOKEN' with your actual bot token
 TOKEN = 'YOUR_BOT_TOKEN'
@@ -12,12 +11,8 @@ intents = discord.Intents.default()
 # Initialize the Discord client with intents
 client = discord.Client(intents=intents)
 
-# Load the GPT-2 model and tokenizer
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2LMHeadModel.from_pretrained("gpt2", pad_token_id=tokenizer.eos_token_id)
-
-# Set the model to evaluation mode
-model.eval()
+# Initialize the OpenAI API client with your API key
+openai.api_key = "API_KEY"  # Replace this with your actual API key
 
 @client.event
 async def on_ready():
@@ -33,13 +28,16 @@ async def on_message(message):
     if message.content.startswith(PREFIX):
         user_input = message.content[len(PREFIX):]
 
-        # Tokenize the user input and convert to tensor
-        input_ids = tokenizer.encode(user_input, return_tensors="pt")
+        # Use the OpenAI API to generate a response using ChatGPT-3
+        response = openai.Completion.create(
+            engine="davinci",  # Choose the engine you have access to
+            prompt=user_input,
+            max_tokens=100,
+            stop=["\n", "You:"],  # Stop the response generation at newline or after "You:"
+        )
 
-        # Generate a response using the GPT-2 model
-        with torch.no_grad():
-            output = model.generate(input_ids, max_length=100, num_return_sequences=1, pad_token_id=tokenizer.eos_token_id)
-            bot_response = tokenizer.decode(output[0], skip_special_tokens=True)
+        # Get the generated response from the API
+        bot_response = response.choices[0].text.strip()
 
         # Send the response back to the user
         await message.channel.send(bot_response)
