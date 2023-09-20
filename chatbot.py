@@ -4,7 +4,7 @@ import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-TOKEN = 'MTEyNjE3Mjg3MTcwMjYxNDA4Ng.Grzbrl.IGjX1L1-WH0ksidyJphpPJZTYdwVoSlCEV8ZLQ'
+TOKEN = 'Your Token'
 PREFIX = '!'  # Change this prefix to your desired command prefix
 
 # Define the intents you need (you may need to adjust these based on your bot's functionality)
